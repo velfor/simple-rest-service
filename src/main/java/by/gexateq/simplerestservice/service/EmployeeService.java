@@ -7,8 +7,6 @@ import java.util.Optional;
 public interface EmployeeService {
     Employee save(Employee employee);
 
-    Iterable<Employee> findAll();
-
     Optional<Employee> findById(Long id);
 
     boolean existsById(Long id);
@@ -16,4 +14,6 @@ public interface EmployeeService {
     void deleteById(Long id);
 
     void delete(Employee employee);
+
+    boolean update(Employee employee, Long id);
 }

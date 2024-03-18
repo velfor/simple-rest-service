@@ -19,11 +19,6 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     @Override
-    public Iterable<Employee> findAll() {
-        return this.employeeRepository.findAll();
-    }
-
-    @Override
     public Optional<Employee> findById(Long id) {
         return this.employeeRepository.findById(id);
     }
@@ -41,5 +36,15 @@ public class EmployeeServiceImpl implements EmployeeService{
     @Override
     public void delete(Employee employee) {
         this.employeeRepository.delete(employee);
+    }
+
+    @Override
+    public boolean update(Employee employee, Long id) {
+        if (existsById(id)){
+            employee.setId(id);
+            employeeRepository.save(employee);
+            return true;
+        }
+        return false;
     }
 }
