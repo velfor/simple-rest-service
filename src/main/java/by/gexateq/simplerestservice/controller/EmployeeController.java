@@ -15,14 +15,14 @@ import java.util.Optional;
 public class EmployeeController {
     private final EmployeeService employeeService;
 
-    @PostMapping(value = "/create")
+    @PostMapping(value = "/employee")
     public ResponseEntity<?> create(@RequestBody Employee employee) {
         this.employeeService.save(employee);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @GetMapping(value = "/find/{id}")
-    public ResponseEntity<?> findById(@PathVariable(name = "id") Long id){
+    @GetMapping(value = "/employee/{id}")
+    public ResponseEntity<?> findById(@PathVariable Long id){
         final Optional<Employee> employee = employeeService.findById(id);
         if (employee.isPresent())
             return new ResponseEntity<>(employee, HttpStatus.OK);
@@ -30,8 +30,8 @@ public class EmployeeController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PutMapping(value = "/update/{id}")
-    public ResponseEntity<?> update(@PathVariable(name = "id") Long id, @RequestBody Employee employee) {
+    @PutMapping(value = "/employee/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Employee employee) {
         final boolean updated = employeeService.update(employee, id);
 
         if (updated)
@@ -40,8 +40,8 @@ public class EmployeeController {
             return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
 
-    @DeleteMapping(value = "/delete/{id}")
-    public ResponseEntity<?> delete(@PathVariable(name = "id") Long id) {
+    @DeleteMapping(value = "/employee/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
         employeeService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }

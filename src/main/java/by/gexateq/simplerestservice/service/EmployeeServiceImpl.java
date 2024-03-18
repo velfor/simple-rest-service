@@ -34,11 +34,6 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     @Override
-    public void delete(Employee employee) {
-        this.employeeRepository.delete(employee);
-    }
-
-    @Override
     public boolean update(Employee employee, Long id) {
         if (existsById(id)){
             employee.setId(id);
