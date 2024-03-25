@@ -1,6 +1,7 @@
 package by.gexateq.simplerestservice.dto;
 
 import by.gexateq.simplerestservice.entity.Review;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,4 +15,5 @@ public class EmployeeDto {
     private String surname;
     private String email;
     private List<Review> reviews;
+
 }

@@ -1,10 +1,14 @@
 package by.gexateq.simplerestservice.service;
 
+import by.gexateq.simplerestservice.dto.EmployeeDto;
 import by.gexateq.simplerestservice.entity.Employee;
 import by.gexateq.simplerestservice.repository.EmployeeRepository;
+import by.gexateq.simplerestservice.utilities.EmployeeMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -12,6 +16,7 @@ import java.util.Optional;
 public class EmployeeServiceImpl implements EmployeeService{
 
     private final EmployeeRepository employeeRepository;
+
 
     @Override
     public Employee save(Employee employee) {
@@ -41,5 +46,9 @@ public class EmployeeServiceImpl implements EmployeeService{
             return true;
         }
         return false;
+    }
+    public List<Employee> findActiveEmployees(Pageable pageable) {
+        List<Employee> activeUsers = employeeRepository.findByIsActive(true, pageable);
+        return activeUsers;
     }
 }
