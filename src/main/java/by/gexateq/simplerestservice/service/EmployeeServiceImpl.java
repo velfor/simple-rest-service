@@ -1,9 +1,7 @@
 package by.gexateq.simplerestservice.service;
 
-import by.gexateq.simplerestservice.dto.EmployeeDto;
 import by.gexateq.simplerestservice.entity.Employee;
 import by.gexateq.simplerestservice.repository.EmployeeRepository;
-import by.gexateq.simplerestservice.utilities.EmployeeMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -13,7 +11,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class EmployeeServiceImpl implements EmployeeService{
+public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
 
@@ -40,15 +38,15 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     @Override
     public boolean update(Employee employee, Long id) {
-        if (existsById(id)){
+        if (existsById(id)) {
             employee.setId(id);
             employeeRepository.save(employee);
             return true;
         }
         return false;
     }
+
     public List<Employee> findActiveEmployees(Pageable pageable) {
-        List<Employee> activeUsers = employeeRepository.findByIsActive(true, pageable);
-        return activeUsers;
+        return employeeRepository.findByIsActive(true, pageable);
     }
 }
