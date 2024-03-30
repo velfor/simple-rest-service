@@ -4,6 +4,7 @@ import by.gexateq.simplerestservice.dto.EmployeeDto;
 import by.gexateq.simplerestservice.entity.Employee;
 import by.gexateq.simplerestservice.service.EmployeeService;
 import by.gexateq.simplerestservice.utilities.HardCodeEmployeeMapper;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.PageRequest;
@@ -34,7 +35,7 @@ public class EmployeeController {
 
     @SuppressWarnings("unused")
     @PostMapping(value = "/employee")
-    public ResponseEntity<?> create(@RequestBody Employee employee) {
+    public ResponseEntity<?> create(@Valid @RequestBody Employee employee) {
         this.employeeService.save(employee);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
