@@ -3,7 +3,7 @@ package by.gexateq.simplerestservice.controller;
 import by.gexateq.simplerestservice.dto.EmployeeDto;
 import by.gexateq.simplerestservice.entity.Employee;
 import by.gexateq.simplerestservice.service.EmployeeService;
-import by.gexateq.simplerestservice.utilities.EmployeeMapper;
+import by.gexateq.simplerestservice.utilities.HardCodeEmployeeMapper;
 import lombok.AllArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.PageRequest;
@@ -31,7 +31,6 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class EmployeeController {
     private final EmployeeService employeeService;
-    private final EmployeeMapper employeeMapper;
 
     @SuppressWarnings("unused")
     @PostMapping(value = "/employee")
@@ -44,10 +43,11 @@ public class EmployeeController {
     @GetMapping(value = "/employee/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
         final Optional<Employee> employee = employeeService.findById(id);
-        if (employee.isPresent())
+        if (employee.isPresent()) {
             return new ResponseEntity<>(employee, HttpStatus.OK);
-        else
+        } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @SuppressWarnings("unused")
@@ -65,7 +65,7 @@ public class EmployeeController {
         }
 
         List<Employee> activeUsers = employeeService.findActiveEmployees(pageable);
-        var activeUsersDto = activeUsers.stream().map(employeeMapper::toDto).toList();
+        var activeUsersDto = activeUsers.stream().map(HardCodeEmployeeMapper::toDto).toList();
         return ResponseEntity.ok().body(activeUsersDto);
     }
 
@@ -78,14 +78,14 @@ public class EmployeeController {
             Pageable pageable) {
 
         List<Employee> activeUsers = employeeService.findActiveEmployees(pageable);
-        var activeUsersDto = activeUsers.stream().map(employeeMapper::toDto).toList();
+        var activeUsersDto = activeUsers.stream().map(HardCodeEmployeeMapper::toDto).toList();
         return ResponseEntity.ok().body(activeUsersDto);
     }
 
     @SuppressWarnings("unused")
     @PutMapping(value = "/employee/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Employee employee) {
-        final boolean updated = employeeService.update(employee, id);
+        final boolean updated = employeeService.update(id, employee);
 
         if (updated)
             return new ResponseEntity<>(HttpStatus.OK);
@@ -96,7 +96,11 @@ public class EmployeeController {
     @SuppressWarnings("unused")
     @DeleteMapping(value = "/employee/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
-        employeeService.deleteById(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        if (employeeService.deleteById(id)) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }

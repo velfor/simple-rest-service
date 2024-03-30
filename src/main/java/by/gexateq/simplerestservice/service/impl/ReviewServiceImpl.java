@@ -1,9 +1,10 @@
-package by.gexateq.simplerestservice.service;
+package by.gexateq.simplerestservice.service.impl;
 
 import by.gexateq.simplerestservice.entity.Employee;
 import by.gexateq.simplerestservice.entity.Review;
 import by.gexateq.simplerestservice.repository.EmployeeRepository;
 import by.gexateq.simplerestservice.repository.ReviewRepository;
+import by.gexateq.simplerestservice.service.ReviewService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

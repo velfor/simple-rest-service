@@ -5,7 +5,7 @@ import by.gexateq.simplerestservice.entity.Employee;
 import by.gexateq.simplerestservice.entity.Review;
 import by.gexateq.simplerestservice.entity.ReviewStatus;
 import by.gexateq.simplerestservice.service.EmployeeService;
-import by.gexateq.simplerestservice.utilities.EmployeeMapper;
+import by.gexateq.simplerestservice.utilities.HardCodeEmployeeMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -34,7 +34,7 @@ class EmployeeControllerMockTest {
     @MockBean
     EmployeeService employeeService;
     @MockBean
-    EmployeeMapper employeeMapper;
+    HardCodeEmployeeMapper employeeMapper;
 
     @Test
     void findActiveEmployeesPageable() throws Exception {

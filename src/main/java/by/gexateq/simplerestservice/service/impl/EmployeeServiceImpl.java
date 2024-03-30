@@ -1,7 +1,8 @@
-package by.gexateq.simplerestservice.service;
+package by.gexateq.simplerestservice.service.impl;
 
 import by.gexateq.simplerestservice.entity.Employee;
 import by.gexateq.simplerestservice.repository.EmployeeRepository;
+import by.gexateq.simplerestservice.service.EmployeeService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -12,9 +13,7 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
-
     private final EmployeeRepository employeeRepository;
-
 
     @Override
     public Employee save(Employee employee) {
@@ -32,12 +31,15 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public void deleteById(Long id) {
-        this.employeeRepository.deleteById(id);
+    public boolean deleteById(Long id) {
+        if (existsById(id)) {
+            this.employeeRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
-
     @Override
-    public boolean update(Employee employee, Long id) {
+    public boolean update(Long id, Employee employee) {
         if (existsById(id)) {
             employee.setId(id);
             employeeRepository.save(employee);

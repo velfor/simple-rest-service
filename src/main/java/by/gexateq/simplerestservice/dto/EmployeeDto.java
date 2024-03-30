@@ -1,10 +1,8 @@
 package by.gexateq.simplerestservice.dto;
 
 import by.gexateq.simplerestservice.entity.Review;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.util.List;
 
 @Data
@@ -14,6 +12,6 @@ public class EmployeeDto {
     private String firstName;
     private String surname;
     private String email;
-    private List<Review> reviews;
-
+    private List<Review> reviews; // TODO: перейти на ReviewDto, чтобы избавиться от циклической зависимости
 }
+

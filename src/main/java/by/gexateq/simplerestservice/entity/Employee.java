@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,7 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Entity(name = "employees")
 public class Employee {
     @Id
@@ -34,13 +37,4 @@ public class Employee {
     @JsonManagedReference
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews;
-
-    public Employee(Long id, String firstName, String lastName, String email, boolean isActive) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.isActive = isActive;
-        this.reviews = new ArrayList<>();
-    }
 }
