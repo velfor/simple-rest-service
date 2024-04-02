@@ -1,5 +1,5 @@
 CREATE TABLE reviews(
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    id SERIAL PRIMARY KEY,
     status VARCHAR(255),
     employee_id BIGINT,
     created_at TIMESTAMP NOT NULL,

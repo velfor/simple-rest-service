@@ -3,7 +3,7 @@ package by.gexateq.simplerestservice.controller;
 import by.gexateq.simplerestservice.dto.EmployeeDto;
 import by.gexateq.simplerestservice.entity.Employee;
 import by.gexateq.simplerestservice.service.EmployeeService;
-import by.gexateq.simplerestservice.utilities.HardCodeEmployeeMapper;
+import by.gexateq.simplerestservice.utilities.MapstructEmployeeMapper;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
@@ -14,6 +14,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,14 +31,19 @@ import java.util.Optional;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api")
+@Validated
 public class EmployeeController {
     private final EmployeeService employeeService;
+    private final MapstructEmployeeMapper employeeMapper;
 
     @SuppressWarnings("unused")
     @PostMapping(value = "/employee")
-    public ResponseEntity<?> create(@Valid @RequestBody Employee employee) {
+    public ResponseEntity<?> create(@Valid @RequestBody EmployeeDto employeeDto) {
+        Employee employee = employeeMapper.toEntity(employeeDto);
+        employee.setIsActive(true);
+        employee.getReviews().stream().forEach(review->review.setEmployee(employee));
         this.employeeService.save(employee);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @SuppressWarnings("unused")
@@ -45,18 +51,20 @@ public class EmployeeController {
     public ResponseEntity<?> findById(@PathVariable Long id) {
         final Optional<Employee> employee = employeeService.findById(id);
         if (employee.isPresent()) {
-            return new ResponseEntity<>(employee, HttpStatus.OK);
+            return ResponseEntity.ok().body(employee);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
     }
 
     @SuppressWarnings("unused")
     @GetMapping(value = "/employee/active")
-    public ResponseEntity<List<EmployeeDto>> findActiveEmployees(@RequestParam(defaultValue = "0") int page,
-                                                                 @RequestParam(defaultValue = "5") int size,
-                                                                 @RequestParam(required = false) String sortBy,
-                                                                 @RequestParam(defaultValue = "asc") String sortDirection) {
+    public ResponseEntity<List<EmployeeDto>> findActiveEmployees(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDirection) {
+
         Pageable pageable;
         if (sortBy != null) {
             Sort.Direction direction = sortDirection.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
@@ -66,7 +74,7 @@ public class EmployeeController {
         }
 
         List<Employee> activeUsers = employeeService.findActiveEmployees(pageable);
-        var activeUsersDto = activeUsers.stream().map(HardCodeEmployeeMapper::toDto).toList();
+        var activeUsersDto = activeUsers.stream().map(employeeMapper::toDto).toList();
         return ResponseEntity.ok().body(activeUsersDto);
     }
 
@@ -79,29 +87,32 @@ public class EmployeeController {
             Pageable pageable) {
 
         List<Employee> activeUsers = employeeService.findActiveEmployees(pageable);
-        var activeUsersDto = activeUsers.stream().map(HardCodeEmployeeMapper::toDto).toList();
+        var activeUsersDto = activeUsers.stream().map(employeeMapper::toDto).toList();
         return ResponseEntity.ok().body(activeUsersDto);
     }
 
     @SuppressWarnings("unused")
     @PutMapping(value = "/employee/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Employee employee) {
+    public ResponseEntity<?> update(@PathVariable Long id,
+                                    @RequestBody @Valid EmployeeDto employeeDto) {
+        Employee employee = employeeMapper.toEntity(employeeDto);
+        employee.setIsActive(true);
+        employee.getReviews().stream().forEach(review->review.setEmployee(employee));
         final boolean updated = employeeService.update(id, employee);
 
         if (updated)
-            return new ResponseEntity<>(HttpStatus.OK);
+            return ResponseEntity.ok().build();
         else
-            return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
     }
 
     @SuppressWarnings("unused")
     @DeleteMapping(value = "/employee/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         if (employeeService.deleteById(id)) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
-        else{
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
         }
     }
 }

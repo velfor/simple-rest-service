@@ -25,11 +25,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class Review {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Enumerated(EnumType.STRING)
     private ReviewStatus status;
-    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id")
     private Employee employee;

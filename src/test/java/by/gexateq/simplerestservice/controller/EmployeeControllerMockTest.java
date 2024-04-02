@@ -1,11 +1,13 @@
 package by.gexateq.simplerestservice.controller;
 
 import by.gexateq.simplerestservice.dto.EmployeeDto;
+import by.gexateq.simplerestservice.dto.ReviewDto;
 import by.gexateq.simplerestservice.entity.Employee;
 import by.gexateq.simplerestservice.entity.Review;
 import by.gexateq.simplerestservice.entity.ReviewStatus;
 import by.gexateq.simplerestservice.service.EmployeeService;
-import by.gexateq.simplerestservice.utilities.HardCodeEmployeeMapper;
+import by.gexateq.simplerestservice.utilities.MapstructEmployeeMapper;
+import by.gexateq.simplerestservice.utilities.MapstructReviewMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -34,7 +36,10 @@ class EmployeeControllerMockTest {
     @MockBean
     EmployeeService employeeService;
     @MockBean
-    HardCodeEmployeeMapper employeeMapper;
+    MapstructEmployeeMapper employeeMapper;
+
+    @MockBean
+    MapstructReviewMapper reviewMapper;
 
     @Test
     void findActiveEmployeesPageable() throws Exception {
@@ -48,7 +53,8 @@ class EmployeeControllerMockTest {
         review.setId(2L);
         review.setStatus(ReviewStatus.DRAFT);
         review.setCreatedAt(LocalDateTime.of(2024, 3,27,0,0,0));
-        dto.setReviews(Collections.singletonList(review));
+        ReviewDto reviewDto = reviewMapper.toDto(review);
+        dto.setReviews(Collections.singletonList(reviewDto));
 
         when(employeeService.findActiveEmployees(any())).thenReturn(Collections.singletonList(new Employee()));
         when(employeeMapper.toDto(any())).thenReturn(dto);
