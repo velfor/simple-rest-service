@@ -6,11 +6,12 @@ import by.gexateq.simplerestservice.entity.Employee;
 import by.gexateq.simplerestservice.entity.Review;
 import by.gexateq.simplerestservice.entity.ReviewStatus;
 import by.gexateq.simplerestservice.service.EmployeeService;
-import by.gexateq.simplerestservice.utilities.MapstructEmployeeMapper;
-import by.gexateq.simplerestservice.utilities.MapstructReviewMapper;
+import by.gexateq.simplerestservice.utilities.EmployeeMapper;
+import by.gexateq.simplerestservice.utilities.ReviewMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -36,40 +37,37 @@ class EmployeeControllerMockTest {
     @MockBean
     EmployeeService employeeService;
     @MockBean
-    MapstructEmployeeMapper employeeMapper;
-
-    @MockBean
-    MapstructReviewMapper reviewMapper;
+    EmployeeMapper employeeMapper;
 
     @Test
     void findActiveEmployeesPageable() throws Exception {
-        EmployeeDto dto = new EmployeeDto();
-        dto.setId(1L);
-        dto.setEmail("test@test.com");
-        dto.setFirstName("First Name");
-        dto.setSurname("Last Name");
+        EmployeeDto employeeDto = new EmployeeDto();
+        employeeDto.setId(1L);
+        employeeDto.setFirstName("First Name");
+        employeeDto.setSurname("Last Name");
+        employeeDto.setEmail("test@test.com");
 
-        Review review = new Review();
-        review.setId(2L);
-        review.setStatus(ReviewStatus.DRAFT);
-        review.setCreatedAt(LocalDateTime.of(2024, 3,27,0,0,0));
-        ReviewDto reviewDto = reviewMapper.toDto(review);
-        dto.setReviews(Collections.singletonList(reviewDto));
+
+        ReviewDto reviewDto = new ReviewDto();
+        reviewDto.setId(2L);
+        reviewDto.setStatus("DRAFT");
+        reviewDto.setCreated(LocalDateTime.of(2024, 3,27,0,0,0));
+        employeeDto.setReviews(Collections.singletonList(reviewDto));
 
         when(employeeService.findActiveEmployees(any())).thenReturn(Collections.singletonList(new Employee()));
-        when(employeeMapper.toDto(any())).thenReturn(dto);
+        when(employeeMapper.toDto(any())).thenReturn(employeeDto);
 
         ResultActions ra = mockMvc.perform(get("/api/employee?page=0&size=100"));
         ra.andExpect(status().isOk())
                 .andExpect(jsonPath("$.*").value(hasSize(1)))
                 .andExpect(jsonPath("$.[0].*").value(hasSize(5)))
                 .andExpect(jsonPath("$.[0].id").value(equalTo(1)))
-                .andExpect(jsonPath("$.[0].email").value(equalTo(dto.getEmail())))
-                .andExpect(jsonPath("$.[0].surname").value(equalTo(dto.getSurname())))
-                .andExpect(jsonPath("$.[0].firstName").value(equalTo(dto.getFirstName())))
+                .andExpect(jsonPath("$.[0].email").value(equalTo(employeeDto.getEmail())))
+                .andExpect(jsonPath("$.[0].surname").value(equalTo(employeeDto.getSurname())))
+                .andExpect(jsonPath("$.[0].firstName").value(equalTo(employeeDto.getFirstName())))
                 .andExpect(jsonPath("$.[0].reviews[0].id").value(equalTo(2)))
-                .andExpect(jsonPath("$.[0].reviews[0].status").value(equalTo(review.getStatus().name())))
-                .andExpect(jsonPath("$.[0].reviews[0].createdAt").value(equalTo("2024-03-27T00:00:00")));
+                .andExpect(jsonPath("$.[0].reviews[0].status").value(equalTo(reviewDto.getStatus())))
+                .andExpect(jsonPath("$.[0].reviews[0].created").value(equalTo("2024-03-27T00:00:00")));
     }
 }
 

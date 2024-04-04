@@ -7,9 +7,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring",
-        uses = MapstructReviewListMapper.class,
+        uses = ReviewListMapper.class,
         injectionStrategy = InjectionStrategy.CONSTRUCTOR)
-public interface MapstructEmployeeMapper {
+public interface EmployeeMapper {
     @Mapping(target = "surname", source = "lastName")
     EmployeeDto toDto(Employee employee);
 

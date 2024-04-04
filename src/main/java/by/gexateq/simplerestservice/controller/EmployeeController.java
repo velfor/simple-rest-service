@@ -3,7 +3,7 @@ package by.gexateq.simplerestservice.controller;
 import by.gexateq.simplerestservice.dto.EmployeeDto;
 import by.gexateq.simplerestservice.entity.Employee;
 import by.gexateq.simplerestservice.service.EmployeeService;
-import by.gexateq.simplerestservice.utilities.MapstructEmployeeMapper;
+import by.gexateq.simplerestservice.utilities.EmployeeMapper;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
@@ -34,14 +34,14 @@ import java.util.Optional;
 @Validated
 public class EmployeeController {
     private final EmployeeService employeeService;
-    private final MapstructEmployeeMapper employeeMapper;
+    private final EmployeeMapper employeeMapper;
 
     @SuppressWarnings("unused")
     @PostMapping(value = "/employee")
     public ResponseEntity<?> create(@Valid @RequestBody EmployeeDto employeeDto) {
         Employee employee = employeeMapper.toEntity(employeeDto);
         employee.setIsActive(true);
-        employee.getReviews().stream().forEach(review->review.setEmployee(employee));
+        employee.getReviews().stream().forEach(review -> review.setEmployee(employee));
         this.employeeService.save(employee);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -97,7 +97,7 @@ public class EmployeeController {
                                     @RequestBody @Valid EmployeeDto employeeDto) {
         Employee employee = employeeMapper.toEntity(employeeDto);
         employee.setIsActive(true);
-        employee.getReviews().stream().forEach(review->review.setEmployee(employee));
+        employee.getReviews().stream().forEach(review -> review.setEmployee(employee));
         final boolean updated = employeeService.update(id, employee);
 
         if (updated)

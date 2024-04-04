@@ -8,9 +8,9 @@ import org.mapstruct.Mapper;
 import java.util.List;
 
 @Mapper(componentModel = "spring",
-        uses = MapstructReviewMapper.class,
+        uses = ReviewMapper.class,
         injectionStrategy = InjectionStrategy.CONSTRUCTOR)
-public interface MapstructReviewListMapper {
+public interface ReviewListMapper {
     List<Review> toEntityList(List<ReviewDto> dtoList);
 
     List<ReviewDto> toDtoList(List<Review> entityList);
