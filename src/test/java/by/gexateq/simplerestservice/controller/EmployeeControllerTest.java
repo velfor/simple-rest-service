@@ -18,17 +18,19 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class EmployeeControllerTest {
@@ -45,11 +47,11 @@ class EmployeeControllerTest {
     @BeforeEach
     void setUp() {
         employee1 = Employee.builder().
-                id(1L).firstName("Иван").lastName("Иванов").email("ivanov@gmail.com").isActive(true).build();
+                id(1L).firstName("John").lastName("Smith").email("john.smith@example.com").isActive(true).build();
         employee2 = Employee.builder().
-                id(2L).firstName("Петр").lastName("Петров").email("petrov@gmail.com").isActive(true).build();
+                id(2L).firstName("Peter").lastName("Johnson").email("peter.johnson@example.com").isActive(true).build();
         var date1 = LocalDateTime.of(2022, 10, 31, 12, 30);
-        var date2 = LocalDateTime.of(2023, 8, 1, 10, 00);
+        var date2 = LocalDateTime.of(2023, 8, 1, 10, 0);
         var review1 = new Review(1L, ReviewStatus.DONE, employee1, date1);
         var review2 = new Review(2L, ReviewStatus.CANCELLED, employee2, date2);
         var reviews1 = new ArrayList<>(List.of(review1));
@@ -81,7 +83,7 @@ class EmployeeControllerTest {
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         verify(service).save(any(Employee.class));
     }
-
+    @SuppressWarnings("unchecked")
     @Test
     void whenFindById_thenEmployeeShouldBeFound() {
         Employee employeeFound = employee1;
@@ -91,7 +93,7 @@ class EmployeeControllerTest {
 
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(employeeFound, ((Optional<Employee>) response.getBody()).get());
+        assertEquals(employeeFound, ((Optional<Employee>) Objects.requireNonNull(response.getBody())).get());
         assertEquals(employeeFound.getFirstName(), ((Optional<Employee>) response.getBody()).get().getFirstName());
         verify(service).findById(1L);
     }
@@ -145,8 +147,8 @@ class EmployeeControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/emplooyee/active возвращает HTTP-ответ со статусом 200 OK и списком EmployeeDto с пагинацией" +
-            " и сортировкой")
+    @DisplayName("GET /api/emplooyee/active Returns HTTP-response with status 200 OK and EmployeeDto list with" +
+            " pagination and sort")
     void findActiveEmployees_ReturnsValidResponseEntity() throws Exception {
         // given
         var activeEmployees = List.of(employee1, employee2);

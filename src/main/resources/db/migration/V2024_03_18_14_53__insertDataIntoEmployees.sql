@@ -1,12 +1,12 @@
 INSERT INTO employees(first_name, last_name, email, is_active)
 VALUES
-    ('Иван', 'Иванов', 'ivanov@example.com', true),
-    ('Петр', 'Петров', 'petrov@example.com', true),
-    ('Мария', 'Сидорова', 'sidorova@example.com', true),
-    ('Анна', 'Козлова', 'kozlova@example.com', true),
-    ('Сергей', 'Смирнов', 'smirnov@example.com', true),
-    ('Ольга', 'Николаева', 'nikolaeva@example.com', true),
-    ('Дмитрий', 'Кузнецов', 'kuznetsov@example.com', true),
-    ('Елена', 'Зайцева', 'zaitseva@example.com', true),
-    ('Алексей', 'Павлов', 'pavlov@example.com', true),
-    ('Наталья', 'Семенова', 'semenova@example.com', true);
+    ('John', 'Smith', 'john.smith@example.com', true),
+    ('Peter', 'Johnson', 'peter.johnson@example.com', true),
+    ('Mary', 'Brown', 'mary.brown@example.com', true),
+    ('Anna', 'Miller', 'anna.miller@example.com', true),
+    ('Sergei', 'Jones', 'sergei.jones@example.com', true),
+    ('Olga', 'Taylor', 'olga.taylor@example.com', true),
+    ('Dmitri', 'Robinson', 'dmitri.robinson@example.com', true),
+    ('Elena', 'White', 'elena.white@example.com', true),
+    ('Alex', 'Clark', 'alex.clark@example.com', true),
+    ('Natalie', 'Evans', 'natalie.evans@example.com', true);

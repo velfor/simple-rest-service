@@ -8,4 +8,6 @@ public interface ReviewService {
 
     List<Review> getReviewsByEmployeeId(Long id);
 
+    void checkAndUpdateReviews();
+
 }
