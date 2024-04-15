@@ -7,20 +7,20 @@ import by.gexateq.simplerestservice.repository.EmployeeRepository;
 import by.gexateq.simplerestservice.repository.ReviewRepository;
 import by.gexateq.simplerestservice.service.ReviewService;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Slf4j
 @AllArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
-    private static final Logger logger = LoggerFactory.getLogger(ReviewService.class);
+
     private final ReviewRepository reviewRepository;
 
     private final EmployeeRepository employeeRepository;
@@ -31,24 +31,32 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Transactional
-    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "${cron.job.check-update-reviews}")
     @Override
     public void checkAndUpdateReviews() {
-        LocalDate currentDate = LocalDate.now();
-        LocalDate threeDaysAgo = currentDate.minusDays(3);
-        var reviewsToCancel =
-                reviewRepository.findByCreatedAtBeforeAndStatusNot(threeDaysAgo, ReviewStatus.CANCELLED);
+        log.debug("checkAndUpdateReviews started");
+        LocalDateTime currentDate = LocalDateTime.now();
+        LocalDateTime threeDaysAgo = currentDate.minusDays(3);
+        var reviewsToCancel = reviewRepository.
+                findByCreatedAtBeforeAndStatusNot(threeDaysAgo, ReviewStatus.CANCELLED);
+        log.debug("checkAndUpdateReviews: reviewsToCancel.size={}", reviewsToCancel.size());
+
         for (Review review : reviewsToCancel) {
             try {
                 review.setStatus(ReviewStatus.CANCELLED);
                 reviewRepository.save(review);
+                log.debug("checkAndUpdateReviews: review.id={} set to CANCELLED", review.getId());
                 Employee employee = review.getEmployee();
-                if (reviewRepository.findAllByEmployeeAndStatusNot(employee, ReviewStatus.CANCELLED).isEmpty()) {
+
+                if (reviewRepository.findAllByEmployeeAndStatusNot(
+                        employee, ReviewStatus.CANCELLED).isEmpty()) {
                     employee.setIsActive(false);
                     employeeRepository.save(employee);
+                    log.debug("checkAndUpdateReviews: employee.id={} set to Active=false",
+                            employee.getId());
                 }
             } catch (Exception e) {
-                logger.error("An error occurred while processing review with ID: " + review.getId(), e);
+                log.error("An error occurred while processing review with ID: " + review.getId(), e);
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             }
         }
