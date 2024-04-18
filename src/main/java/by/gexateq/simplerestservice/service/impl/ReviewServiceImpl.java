@@ -1,6 +1,5 @@
 package by.gexateq.simplerestservice.service.impl;
 
-import by.gexateq.simplerestservice.entity.Employee;
 import by.gexateq.simplerestservice.entity.Review;
 import by.gexateq.simplerestservice.entity.ReviewStatus;
 import by.gexateq.simplerestservice.repository.EmployeeRepository;
@@ -11,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,26 +37,26 @@ public class ReviewServiceImpl implements ReviewService {
         LocalDateTime threeDaysAgo = currentDate.minusDays(3);
         var reviewsToCancel = reviewRepository.
                 findByCreatedAtBeforeAndStatusNot(threeDaysAgo, ReviewStatus.CANCELLED);
-        log.debug("checkAndUpdateReviews: reviewsToCancel.size={}", reviewsToCancel.size());
+        log.debug("checkAndUpdateReviews: Found {} reviews to cancel", reviewsToCancel.size());
 
-        for (Review review : reviewsToCancel) {
-            try {
-                review.setStatus(ReviewStatus.CANCELLED);
-                reviewRepository.save(review);
-                log.debug("checkAndUpdateReviews: review.id={} set to CANCELLED", review.getId());
-                Employee employee = review.getEmployee();
+        List<Review> reviewsToUpdate = reviewsToCancel.stream()
+                .peek(review -> review.setStatus(ReviewStatus.CANCELLED))
+                .toList();
+        if (!reviewsToUpdate.isEmpty()) {
+            reviewRepository.saveAll(reviewsToUpdate);
+            log.debug("checkAndUpdateReviews: Updated {} reviews", reviewsToUpdate.size());
+        }
 
-                if (reviewRepository.findAllByEmployeeAndStatusNot(
-                        employee, ReviewStatus.CANCELLED).isEmpty()) {
-                    employee.setIsActive(false);
-                    employeeRepository.save(employee);
-                    log.debug("checkAndUpdateReviews: employee.id={} set to Active=false",
-                            employee.getId());
-                }
-            } catch (Exception e) {
-                log.error("An error occurred while processing review with ID: " + review.getId(), e);
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            }
+        var employeesWithAllReviewsCancelled = employeeRepository.findEmployeesWithAllReviewsCancelled();
+        log.debug("checkAndUpdateReviews: Found {} employees to be transferred to inactive status",
+                employeesWithAllReviewsCancelled.size());
+
+        var employeesToUpdate = employeesWithAllReviewsCancelled.stream()
+                .peek(employee -> employee.setIsActive(false))
+                .toList();
+        if (!employeesToUpdate.isEmpty()) {
+            employeeRepository.saveAll(employeesToUpdate);
+            log.debug("checkAndUpdateReviews: Updated {} employees", employeesToUpdate.size());
         }
 
     }
