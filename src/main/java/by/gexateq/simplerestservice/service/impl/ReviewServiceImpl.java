@@ -28,11 +28,23 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewRepository.findByEmployeeId(id);
     }
 
-    @Transactional
     @Scheduled(cron = "${cron.job.check-update-reviews}")
     @Override
     public void checkAndUpdateReviews() {
         log.debug("checkAndUpdateReviews started");
+
+        // transactional functional.
+        // todo find the problem, fix and provide a test.
+        checkAndUpdateReviewsAndEmployees();
+
+        // other non-transactional functional
+        // ....
+
+        log.debug("checkAndUpdateReviews finished");
+    }
+
+    @Transactional
+    public void checkAndUpdateReviewsAndEmployees() {
         LocalDateTime currentDate = LocalDateTime.now();
         LocalDateTime threeDaysAgo = currentDate.minusDays(3);
         var reviewsToCancel = reviewRepository.
