@@ -1,0 +1,1 @@
+INSERT INTO employees (first_name, last_name, email, is_active) VALUES ('John', 'Smith', 'john.smith@example.com', true);

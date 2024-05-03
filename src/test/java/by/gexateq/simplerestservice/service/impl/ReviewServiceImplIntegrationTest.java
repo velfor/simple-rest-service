@@ -34,6 +34,7 @@ public class ReviewServiceImplIntegrationTest {
     /**
      * @noinspection OptionalGetWithoutIsPresent
      */
+
     @Test
     public void testCheckAndUpdateReviews() {
         var employee = Employee.builder()
@@ -50,7 +51,6 @@ public class ReviewServiceImplIntegrationTest {
         var reviews = new ArrayList<>(List.of(review));
         employee.setReviews(reviews);
 
-
         employeeRepository.save(employee);
         reviewRepository.save(review);
 
@@ -58,7 +58,6 @@ public class ReviewServiceImplIntegrationTest {
 
         var updatedReview = reviewRepository.findById(review.getId());
         assertEquals(ReviewStatus.CANCELLED, updatedReview.get().getStatus());
-
         var updatedEmployee = employeeRepository.findById(employee.getId());
         assertFalse(updatedEmployee.get().getIsActive());
     }
