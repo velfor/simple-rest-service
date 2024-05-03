@@ -13,7 +13,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     List<Employee> findByIsActive(boolean isActive, Pageable pageable);
 
     @Query(value = "SELECT DISTINCT e.* FROM employees AS e " +
-            "WHERE NOT EXISTS (SELECT 1 FROM reviews AS r WHERE r.employee_id = e.id AND r.status <> 'CANCELLED')",
+            "WHERE e.is_active = TRUE " +
+            "AND NOT EXISTS (SELECT 1 FROM reviews AS r WHERE r.employee_id = e.id AND r.status <> 'CANCELLED')",
             nativeQuery = true)
     List<Employee> findEmployeesWithAllReviewsCancelled();
 }
