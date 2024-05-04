@@ -86,7 +86,7 @@ public class EmployeeController {
             @ParameterObject
             Pageable pageable) {
 
-        List<Employee> activeUsers = employeeService.findActiveEmployees(pageable);
+        var activeUsers = employeeService.findActiveEmployees(pageable);
         var activeUsersDto = activeUsers.stream().map(employeeMapper::toDto).toList();
         return ResponseEntity.ok().body(activeUsersDto);
     }
