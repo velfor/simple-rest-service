@@ -10,4 +10,5 @@ public interface ReviewService {
 
     void checkAndUpdateReviews();
 
+    void reviewsProcessing();
 }
