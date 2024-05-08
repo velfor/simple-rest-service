@@ -12,7 +12,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doThrow;
 
 @SpringBootTest
@@ -34,10 +33,7 @@ public class ReviewServiceImplTransactionTest {
      */
     @Test
     @Sql({"/SQL/insertEmployee.sql", "/SQL/insertReview.sql"})
-    /*
-    INSERT INTO employees (first_name, last_name, email, is_active) VALUES ('John', 'Smith', 'john.smith@example.com', true);
-    INSERT INTO reviews (status, created_at, employee_id) VALUES ('DRAFT', '2023-01-01 00:00:00', 1);
-    * */
+
     public void testCheckAndUpdateReviews() {
 
         doThrow(new RuntimeException("Custom exception in EmployeeRepository for test"))

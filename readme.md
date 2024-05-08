@@ -1,40 +1,45 @@
-REST API, предоставляемый классом контроллера EmployeeController, включает следующие конечные точки:
+# Employee Management REST API
 
-1. **Создание нового сотрудника**
-    - Метод: POST
-    - Путь: /api/employee
-    - Описание: Создает новую запись о сотруднике на основе переданных данных.
-    - Параметры: Тело запроса содержит данные о сотруднике.
-    - Ответ: HTTP статус 201 CREATED.
+This repository contains a RESTful API for managing employees. The API allows creating, updating, retrieving, and deleting employee records.
 
-2. **Получение информации о сотруднике по идентификатору**
-    - Метод: GET
-    - Путь: /api/employee/{id}
-    - Описание: Возвращает информацию о сотруднике по указанному идентификатору.
-    - Параметры: id - идентификатор сотрудника.
-    - Ответ: Если сотрудник найден, возвращает данные сотрудника и HTTP статус 200 OK, иначе возвращает HTTP статус 404 NOT FOUND.
+## Endpoints
 
-3. **Получение списка активных сотрудников**
-    - Метод: GET
-    - Путь: /api/employee/active
-    - Описание: Возвращает список активных сотрудников с возможностью пагинации и сортировки.
-    - Параметры:
-        - page (необязательный, по умолчанию 0) - номер страницы.
-        - size (необязательный, по умолчанию 5) - размер страницы.
-        - sortBy (необязательный) - поле для сортировки.
-        - sortDirection (необязательный, по умолчанию "asc") - направление сортировки ("asc" или "desc").
-    - Ответ: Возвращает список активных сотрудников в формате EmployeeDto и HTTP статус 200 OK.
+### Create Employee
+- **POST** /api/employee
+   - Creates a new employee record.
+   - Request body should contain employee details in JSON format.
+   - Returns a 201 Created response upon successful creation.
 
-4. **Обновление информации о сотруднике по идентификатору**
-    - Метод: PUT
-    - Путь: /api/employee/{id}
-    - Описание: Обновляет данные о сотруднике по указанному идентификатору.
-    - Параметры: id - идентификатор сотрудника. Тело запроса содержит новые данные о сотруднике.
-    - Ответ: Если обновление прошло успешно, возвращает HTTP статус 200 OK, иначе возвращает HTTP статус 304 NOT MODIFIED.
+### Find Employee by ID
+- **GET** /api/employee/{id}
+   - Retrieves an employee record by ID.
+   - Returns a 200 OK response with the employee details if found, or a 404 Not Found response if not found.
 
-5. **Удаление информации о сотруднике по идентификатору**
-    - Метод: DELETE
-    - Путь: /api/employee/{id}
-    - Описание: Удаляет запись о сотруднике по указанному идентификатору.
-    - Параметры: id - идентификатор сотрудника.
-    - Ответ: Возвращает HTTP статус 200 OK после успешного удаления записи.
+### Find Active Employees (Paged)
+- **GET** /api/employee/active
+   - Retrieves a list of active employees with pagination support.
+   - Supports optional query parameters for pagination and sorting.
+   - Returns a list of active employee records in JSON format.
+
+### Find Active Employees (Pageable)
+- **GET** /api/employee
+   - Retrieves a list of active employees with pageable support.
+   - Supports default page size and sorting configuration.
+   - Returns a list of active employee records in JSON format.
+
+### Update Employee
+- **PUT** /api/employee/{id}
+   - Updates an existing employee record by ID.
+   - Request body should contain updated employee details in JSON format.
+   - Returns a 200 OK response upon successful update, or a 304 Not Modified response if update fails.
+
+### Delete Employee
+- **DELETE** /api/employee/{id}
+   - Deletes an employee record by ID.
+   - Returns a 200 OK response upon successful deletion, or a 404 Not Found response if the employee is not found.
+
+## Technologies Used
+- Java 17
+- Spring Framework 3
+- Lombok
+- Maven

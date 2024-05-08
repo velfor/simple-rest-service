@@ -4,14 +4,13 @@ import by.gexateq.simplerestservice.entity.Employee;
 import by.gexateq.simplerestservice.entity.Review;
 import by.gexateq.simplerestservice.entity.ReviewStatus;
 import org.junit.jupiter.api.Test;
-import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 class EmployeeMapperTest {
