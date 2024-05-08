@@ -33,7 +33,6 @@ public class ReviewServiceImplTransactionTest {
      */
     @Test
     @Sql({"/SQL/insertEmployee.sql", "/SQL/insertReview.sql"})
-
     public void testCheckAndUpdateReviews() {
 
         doThrow(new RuntimeException("Custom exception in EmployeeRepository for test"))
