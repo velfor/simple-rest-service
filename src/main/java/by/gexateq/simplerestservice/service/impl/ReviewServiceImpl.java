@@ -1,5 +1,6 @@
 package by.gexateq.simplerestservice.service.impl;
 
+
 import by.gexateq.simplerestservice.entity.Review;
 import by.gexateq.simplerestservice.entity.ReviewStatus;
 import by.gexateq.simplerestservice.repository.EmployeeRepository;
@@ -12,6 +13,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+
 
 @Service
 @Slf4j
@@ -22,6 +26,8 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
     private final EmployeeRepository employeeRepository;
 
+    private final ExecutorService executorService;
+
     @Override
     public List<Review> getReviewsByEmployeeId(Long id) {
         return reviewRepository.findByEmployeeId(id);
@@ -31,15 +37,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public void checkAndUpdateReviews() {
         log.debug("checkAndUpdateReviews started");
-
-        // transactional functional.
-        // todo find the problem, fix and provide a test.
-
         helper.checkAndUpdateReviewsAndEmployees();
-
-        // other non-transactional functional
-        // ....
-
         log.debug("checkAndUpdateReviews finished");
     }
 
@@ -49,23 +47,27 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public void reviewsProcessing() {
 
-        // a slow logic....
         LocalDateTime currentDate = LocalDateTime.now();
         LocalDateTime threeDaysAgo = currentDate.minusDays(3);
         var reviews = reviewRepository.
                 findByCreatedAtBeforeAndStatusNot(threeDaysAgo, ReviewStatus.CANCELLED);
         log.debug("reviewsProcessing: Found {} reviews", reviews.size());
+
         reviews.forEach(r -> {
             if (r.getCreatedAt().isBefore(LocalDateTime.now().minusDays(1))) {
-                log.info("Review id={} is a day before", r.getId());
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ie) {
-                    log.error("InterruptedException: ", ie);
-                }
+                executorService.submit(() -> {
+                    log.info("Review id={} is a day before", r.getId());
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ie) {
+                        log.error("InterruptedException: ", ie);
+                    }
+                });
             }
         });
-        // ....
+
+        executorService.shutdown();
+
 
         // another slow logic....
         var employees = employeeRepository.findEmployeesWithAllReviewsCancelled();

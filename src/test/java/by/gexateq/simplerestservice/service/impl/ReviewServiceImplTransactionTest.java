@@ -4,6 +4,7 @@ import by.gexateq.simplerestservice.entity.ReviewStatus;
 import by.gexateq.simplerestservice.repository.EmployeeRepository;
 import by.gexateq.simplerestservice.repository.ReviewRepository;
 import by.gexateq.simplerestservice.service.ReviewService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,6 +28,11 @@ public class ReviewServiceImplTransactionTest {
 
     @MockBean
     private EmployeeRepository employeeRepository;
+
+    @BeforeEach
+    void clenaDb(){
+        employeeRepository.deleteAll();
+    }
 
 
     /**
