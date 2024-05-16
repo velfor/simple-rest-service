@@ -16,3 +16,5 @@ is_active
 Stack: Maven, spring (Boot, Data). 
 Spring configuration via annotations, no xml configs.
 Base is on your choice, can be 'in-memory', H2 for example if it's easier.
+
+The development of the project is in the pull-requests to the "develop" branch
